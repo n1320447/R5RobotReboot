@@ -3,6 +3,8 @@
 #include <TB6612_ESP32.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
+#include <WiFi.h>
+
 
 //I2C pins
 #define SCL1 22
@@ -23,6 +25,10 @@
 #define DIST1 34
 #define DIST2 4 //DOES NOT WORKKKKKKKKKKK, will not work, no ADC pins left on esp :( without pretty significant changes to wiring will need to make due with these
 #define DIST3 2
+
+const char* ssid = "";     // Replace with your Wi-Fi network name
+const char* password = ""; // Replace with your Wi-Fi password
+
 
 
 class MotorExtended {
@@ -408,25 +414,43 @@ void moveForward(){
 }
 
 void moveReverse(){
-  motor1.analogDriveMotor(100);
-  motor2.analogDriveMotor(100);
+  motor1.analogDriveMotor(50);
+  motor2.analogDriveMotor(50);
+  delay(1000); // Wait for 1 second
+
+  motor1.brakeMotor(); // If there's a brake function
+  motor2.brakeMotor(); // If there's a brake function
+}
+
+void reverseFromLeft(){
+  motor1.analogDriveMotor(50);
+  motor2.analogDriveMotor(0);
+  delay(1000); // Wait for 1 second
+
+  motor1.brakeMotor(); // If there's a brake function
+  motor2.brakeMotor(); // If there's a brake function
+}
+
+void reverseFromRight(){
+  motor1.analogDriveMotor(0);
+  motor2.analogDriveMotor(50);
+  delay(1000);
+  motor1.brakeMotor(); // If there's a brake function
+  motor2.brakeMotor(); // If there's a brake function
 }
 
 void turnLeft(){
-  motor1.analogDriveMotor(-100);
+  motor1.analogDriveMotor(-50);
   motor2.analogDriveMotor(0);
+  delay(2000); // Wait for 1 second
 
-  delay(1000); // Wait for 1 second
-
-  // Stop the motors after 1 second
   motor1.brakeMotor(); // If there's a brake function
   motor2.brakeMotor(); // If there's a brake function
 }
 
 void turnRight(){
   motor1.analogDriveMotor(0);
-  motor2.analogDriveMotor(-100);
-
+  motor2.analogDriveMotor(-50);
   delay(1000); // Wait for 1 second
 
   // Stop the motors after 1 second
@@ -434,30 +458,73 @@ void turnRight(){
   motor2.brakeMotor(); // If there's a brake function
 }
 
-void getClearOfObject(){
-  /*
-    if sensor left has an object infront of it that 
-    is <= 20 cm away..turn right
+void scanLeftandRight(){
+  //turn left a bit
+  int found = 0;
+  // motor1.analogDriveMotor(-50);
+  // motor2.analogDriveMotor(0);
+  // delay(2000);
+  turnLeft();
+  reverseFromLeft();
+  turnRight();
+  reverseFromRight();
+  // turnRight();
+  // motor1.analogDriveMotor(0);
+  // motor2.analogDriveMotor(-50);
+  // delay(3000);
+   
 
-    if sensor right has an object infront of it, that 
-    is <= 20 cm away...turn left
-  */
+}
+
+
+/* 
+
+Function attempts to find clearance from sensor1, ideally
+would use both sensors but sensor 2 is acting funky.
+*/
+void getClearOfObject(){
 
   float distance1 = sensorValueToDistance(analogRead(DIST1));
+  //2.5" wheels currently
   if (distance1 <= 20){
+    int left = 0;
+    int right = 0;
+    // turnLeft();
       while(distance1 <= 20){
+        // turnLeft();
+        // scanLeftandRight();
+        turnRight();
+        if (distance1 <=20) left = 1;
+        reverseFromRight();
+        if (distance1 <=20) left = 1;
+        
         turnLeft();
+        if(distance1 <= 20) right = 1;
+        reverseFromLeft();
+        if(distance1 <= 20) right = 1;
+
+        if(left == 1 && right == 1){
+          moveReverse();
+          
+        } else if(left == 0 && right ==1){
+          //go left, its clear
+          turnLeft();
+          moveForward();
+        } else if(left == 1 && right == 0){
+          turnRight();
+          moveForward();
+        }
         distance1 = sensorValueToDistance(analogRead(DIST1));
       }
       
   }
-  float distance3 = sensorValueToDistance(analogRead(DIST3));
-  // if (distance3 <= 20){
-  //   while(distance3 <= 20){
+
+  // float distance3 = sensorValueToDistance(analogRead(DIST3));
+  // if (distance3 <= 15){
+  //   while(distance3 <= 15){
   //     turnLeft();
   //     distance3 = sensorValueToDistance(analogRead(DIST3));
-  //     Serial.print("distance3: ");
-  //     Serial.println(distance3);
+  //     if(distance3>15) break;
   //   }
   // }
 
@@ -471,10 +538,7 @@ void seedRound(){
       Serial.println("found object dist1");
       getClearOfObject();
     } 
-    // else if(objectFound(sensorValueToDistance(analogRead(DIST3)))){
-    //   Serial.println("found object dist3");
-    //   getClearOfObject();
-    // }
+
     // if(objectFound(sensorValueToDistance(analogRead(DIST3)))){
     //         Serial.println("found object dist3");
     //         getClearOfObject();
@@ -482,9 +546,12 @@ void seedRound(){
   // Serial.println(sensorValueToDistance(analogRead(DIST1)));
   // Serial.println(sensorValueToDistance(analogRead(DIST3)));
   // sensorValueToDistance(analogRead(DIST1));
-  delay(100);
+  delay(1000);
 }
 
+void eliminationRound(){
+
+}
 
 
 void setup() {
@@ -501,6 +568,19 @@ void setup() {
   motor2.connectEncoder();
   Serial.println("For imu...");
   imu.connect();
+
+  //   // Connect to Wi-Fi
+  // WiFi.begin(ssid, password);
+  // Serial.println("Connecting to WiFi...");
+  
+  // while (WiFi.status() != WL_CONNECTED) {
+  //   delay(1000);
+  //   Serial.println("Establishing connection to WiFi..");
+  // }
+  
+  // // Successfully connected to Wi-Fi
+  // Serial.println("Connected to Wi-Fi");
+
   
 }
 
