@@ -4,6 +4,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <WiFi.h>
+#include "BluetoothSerial.h"
 
 
 //I2C pins
@@ -25,6 +26,12 @@
 #define DIST1 34
 #define DIST2 4 //DOES NOT WORKKKKKKKKKKK, will not work, no ADC pins left on esp :( without pretty significant changes to wiring will need to make due with these
 #define DIST3 2
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+BluetoothSerial SerialBT;
 
 const char* ssid = "";     // Replace with your Wi-Fi network name
 const char* password = ""; // Replace with your Wi-Fi password
@@ -58,7 +65,7 @@ class MotorExtended {
       AS5600 encoder;
 
     // Constructor for non-default I2C bus
-    MotorExtended(int IN1, int IN2, int PWM, int STBY_PIN, int CHANNEL, TwoWire& wire, int DIRECTION = 1) 
+    MotorExtended(int IN1, int IN2, int PWM, int STBY_PIN, int CHANNEL, TwoWire& wire, int DIRECTION = 1) //change to -1 to change direction
       : motor(IN1, IN2, PWM, DIRECTION, STBY_PIN, 5000, 8, CHANNEL), 
         encoder(&wire){
     }
@@ -101,6 +108,9 @@ class MotorExtended {
       //gets new position
       cumulative_position = encoder.getCumulativePosition() - offset_cumulative_position;
     }
+
+
+
 
     void updateAngularVelocity(bool smoothing = true, float alpha = 0.1){
       // Ensure there is a new position update
@@ -303,6 +313,15 @@ class IMU {
     }
 };
 
+void bluetoothConnection(){
+  if (Serial.available()) {
+    SerialBT.write(Serial.read());
+  }
+  if (SerialBT.available()) {
+    Serial.write(SerialBT.read());
+  }
+  delay(20);       
+}
 
 
 TwoWire I2Ctwo = TwoWire(1);
@@ -345,7 +364,7 @@ float sensorValueToDistance(int value){
   float sum = 0.0;
   for (size_t i = 0; i < ROLLING_AVERAGE_SIZE; ++i)
     sum += rolling_average[i];
-  Serial.println(sum / ROLLING_AVERAGE_SIZE, 2);
+  // Serial.println(sum / ROLLING_AVERAGE_SIZE, 2);
 
   distance_prev = distance_cm;
   prev_time = cur_time;
@@ -408,9 +427,17 @@ bool objectFound(int value){
   return false;
 }
 
-void moveForward(){
-  motor1.analogDriveMotor(-100);
-  motor2.analogDriveMotor(-100);
+
+/*new code starts here
+  input: int speed
+  desription: parameter speed will dictate how fast motors go.
+  a neg value goes forward, pos goes backward
+  output: return void
+*/ 
+
+void moveForward(int speed){
+  motor1.analogDriveMotor(speed*1.04);
+  motor2.analogDriveMotor(speed);
 }
 
 void moveReverse(){
@@ -423,7 +450,7 @@ void moveReverse(){
 }
 
 void reverseFromLeft(){
-  motor1.analogDriveMotor(50);
+  motor1.analogDriveMotor(100);
   motor2.analogDriveMotor(0);
   delay(1000); // Wait for 1 second
 
@@ -433,16 +460,16 @@ void reverseFromLeft(){
 
 void reverseFromRight(){
   motor1.analogDriveMotor(0);
-  motor2.analogDriveMotor(50);
+  motor2.analogDriveMotor(100);
   delay(1000);
   motor1.brakeMotor(); // If there's a brake function
   motor2.brakeMotor(); // If there's a brake function
 }
 
 void turnLeft(){
-  motor1.analogDriveMotor(-50);
+  motor1.analogDriveMotor(-100);
   motor2.analogDriveMotor(0);
-  delay(2000); // Wait for 1 second
+  delay(1200); // Wait for 1 second
 
   motor1.brakeMotor(); // If there's a brake function
   motor2.brakeMotor(); // If there's a brake function
@@ -450,7 +477,7 @@ void turnLeft(){
 
 void turnRight(){
   motor1.analogDriveMotor(0);
-  motor2.analogDriveMotor(-50);
+  motor2.analogDriveMotor(-100);
   delay(1000); // Wait for 1 second
 
   // Stop the motors after 1 second
@@ -474,6 +501,11 @@ void scanLeftandRight(){
   // delay(3000);
    
 
+}
+
+void breakMotors(){
+  motor1.brakeMotor(); // If there's a brake function
+  motor2.brakeMotor(); // If there's a brake function
 }
 
 
@@ -509,10 +541,10 @@ void getClearOfObject(){
         } else if(left == 0 && right ==1){
           //go left, its clear
           turnLeft();
-          moveForward();
+          moveForward(-100);
         } else if(left == 1 && right == 0){
           turnRight();
-          moveForward();
+          moveForward(-100);
         }
         distance1 = sensorValueToDistance(analogRead(DIST1));
       }
@@ -532,21 +564,53 @@ void getClearOfObject(){
 
 //Seed round code
 void seedRound(){
-    motor1.analogDriveMotor(-100);
-    motor2.analogDriveMotor(-100);
+    // motor1.analogDriveMotor(-100);
+    // motor2.analogDriveMotor(-105);
+
+
+    // turn right from starting postion
+    turnRight();
+    moveForward(-100);
+    delay(250);
+    turnLeft();
+    //move forward
+    Serial.println("moving forward...");
+    moveForward(-100);
+    delay(10000); // need to fine tune this, this 
+    //approach side wall, turn left
+    Serial.println("moving left...");
+    // turnLeft();
+    // delay(1000); // need to fine tune this
+    // Serial.println("moving forward...");
+    // moveForward(-100);
+    
+    //try to hit middle button? need to add midpoint check for mid button
+
+    //approach other end of seeding round course
     if(objectFound(sensorValueToDistance(analogRead(DIST1)))){
       Serial.println("found object dist1");
       getClearOfObject();
+      //turn towards end button
+      turnLeft();
+      moveForward(-100);
+      //push button
+      //reverse from buttton
     } 
 
-    // if(objectFound(sensorValueToDistance(analogRead(DIST3)))){
-    //         Serial.println("found object dist3");
-    //         getClearOfObject();
-    // }
-  // Serial.println(sensorValueToDistance(analogRead(DIST1)));
-  // Serial.println(sensorValueToDistance(analogRead(DIST3)));
-  // sensorValueToDistance(analogRead(DIST1));
+    moveReverse();
+    //turn to start navigating back, need to get to other side of T-posts
+    turnLeft();
+    moveForward(-100);
+    delay(1000);
+    //turn towards other side of t-posts
+    Serial.println("turning right...");
+    turnRight();
+    moveForward(-100);
+
   delay(1000);
+  Serial.println("break motors...");
+  breakMotors();
+
 }
 
 void eliminationRound(){
@@ -568,23 +632,20 @@ void setup() {
   motor2.connectEncoder();
   Serial.println("For imu...");
   imu.connect();
+  //  Serial.begin(115200);
 
-  //   // Connect to Wi-Fi
-  // WiFi.begin(ssid, password);
-  // Serial.println("Connecting to WiFi...");
-  
-  // while (WiFi.status() != WL_CONNECTED) {
-  //   delay(1000);
-  //   Serial.println("Establishing connection to WiFi..");
-  // }
-  
-  // // Successfully connected to Wi-Fi
-  // Serial.println("Connected to Wi-Fi");
+  SerialBT.begin("ESP32test"); //Bluetooth device name
+  Serial.println("The device started, now you can pair it with bluetooth!");
+  bluetoothConnection();
+  seedRound();
 
   
 }
 
 void loop() {
-  seedRound();
+
+  // Serial.println(sensorValueToDistance(analogRead(DIST1)));
+  // bluetoothConnection();
+  // seedRound();
 }
 
