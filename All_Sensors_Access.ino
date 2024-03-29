@@ -436,7 +436,7 @@ bool objectFound(int value){
 */ 
 
 void moveForward(int speed){
-  motor1.analogDriveMotor(speed*1.04);
+  motor1.analogDriveMotor(speed*1.03);
   motor2.analogDriveMotor(speed);
 }
 
@@ -467,9 +467,10 @@ void reverseFromRight(){
 }
 
 void turnLeft(){
+
   motor1.analogDriveMotor(-100);
   motor2.analogDriveMotor(0);
-  delay(1200); // Wait for 1 second
+  delay(800); // Wait for 1 second
 
   motor1.brakeMotor(); // If there's a brake function
   motor2.brakeMotor(); // If there's a brake function
@@ -479,7 +480,6 @@ void turnRight(){
   motor1.analogDriveMotor(0);
   motor2.analogDriveMotor(-100);
   delay(1000); // Wait for 1 second
-
   // Stop the motors after 1 second
   motor1.brakeMotor(); // If there's a brake function
   motor2.brakeMotor(); // If there's a brake function
@@ -518,38 +518,44 @@ void getClearOfObject(){
 
   float distance1 = sensorValueToDistance(analogRead(DIST1));
   //2.5" wheels currently
-  if (distance1 <= 20){
-    int left = 0;
-    int right = 0;
-    // turnLeft();
-      while(distance1 <= 20){
-        // turnLeft();
-        // scanLeftandRight();
-        turnRight();
-        if (distance1 <=20) left = 1;
-        reverseFromRight();
-        if (distance1 <=20) left = 1;
-        
-        turnLeft();
-        if(distance1 <= 20) right = 1;
-        reverseFromLeft();
-        if(distance1 <= 20) right = 1;
-
-        if(left == 1 && right == 1){
-          moveReverse();
-          
-        } else if(left == 0 && right ==1){
-          //go left, its clear
-          turnLeft();
-          moveForward(-100);
-        } else if(left == 1 && right == 0){
-          turnRight();
-          moveForward(-100);
-        }
-        distance1 = sensorValueToDistance(analogRead(DIST1));
-      }
+  // if (distance1 <= 20){
+  int left = 0;
+  int right = 0;
+  // turnLeft();
+    while(distance1 <= 20){
+      // turnLeft();
+      // scanLeftandRight();
       
-  }
+      turnRight();
+      if (distance1 <=20) left = 1;
+      reverseFromRight();
+      if (distance1 <=20) left = 1;
+      
+      turnLeft();
+      if(distance1 <= 20) right = 1;
+      reverseFromLeft();
+      if(distance1 <= 20) right = 1;
+
+      if(left == 1 && right == 1){
+        moveReverse();
+        
+      } else if(left == 0 && right ==1){
+        //go left, its clear
+        turnLeft();
+        delay(100);
+        moveForward(-100);
+      } else if(left == 1 && right == 0){
+        turnRight();
+        delay(100);
+
+        moveForward(-100);
+      }
+      distance1 = sensorValueToDistance(analogRead(DIST1));
+      left = 0;
+      right = 0;
+    }
+      
+  // }
 
   // float distance3 = sensorValueToDistance(analogRead(DIST3));
   // if (distance3 <= 15){
@@ -564,19 +570,47 @@ void getClearOfObject(){
 
 //Seed round code
 void seedRound(){
-    // motor1.analogDriveMotor(-100);
-    // motor2.analogDriveMotor(-105);
 
-
-    // turn right from starting postion
+    // turn right from starting postion then turn left. 
+    // Gets ready to start moving forward towards other end of course
     turnRight();
-    moveForward(-100);
+    moveForward(-150);
     delay(250);
     turnLeft();
-    //move forward
-    Serial.println("moving forward...");
-    moveForward(-100);
-    delay(10000); // need to fine tune this, this 
+    Serial.println("Start moving forward...");
+
+
+    // Loops that makes robot move forward if object detected, 
+    // runs getClearOfObject().
+  
+    // while(!objectFound(sensorValueToDistance(analogRead(DIST1)))){
+    int objectsDetected = 0; // int saving the amount of objects detected.
+    while(true){
+      // while(true){
+      Serial.println(sensorValueToDistance(analogRead(DIST1)));
+      moveForward(-150);
+      if(objectFound(sensorValueToDistance(analogRead(DIST1)))){
+        Serial.println("found object dist1");
+        getClearOfObject();
+        //turn towards end button
+        // turnRight();
+        //turnLeft();
+        // moveForward(-100);
+        //push button
+        //reverse from buttton
+        objectsDetected++;
+        Serial.print("objectDetect:");
+        Serial.println(objectsDetected);
+      } 
+      //hopefully dont detect more than 4 objects on the way to first button.
+      if(objectsDetected == 20){
+        break;
+      }
+    }
+
+    Serial.println("found object dist1!!!!");
+    
+    // delay(5000); // need to fine tune this, this 
     //approach side wall, turn left
     Serial.println("moving left...");
     // turnLeft();
@@ -587,25 +621,17 @@ void seedRound(){
     //try to hit middle button? need to add midpoint check for mid button
 
     //approach other end of seeding round course
-    if(objectFound(sensorValueToDistance(analogRead(DIST1)))){
-      Serial.println("found object dist1");
-      getClearOfObject();
-      //turn towards end button
-      turnLeft();
-      moveForward(-100);
-      //push button
-      //reverse from buttton
-    } 
+
 
     moveReverse();
     //turn to start navigating back, need to get to other side of T-posts
     turnLeft();
-    moveForward(-100);
+    moveForward(-150);
     delay(1000);
     //turn towards other side of t-posts
     Serial.println("turning right...");
     turnRight();
-    moveForward(-100);
+    moveForward(-150);
 
   delay(1000);
   Serial.println("break motors...");
