@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <AS5600.h>
-#include <TB6612_ESP32.h>
 #include "BluetoothSerial.h"
 #include "MotorExtended.h"
 #include "DistanceSensor.h"
