@@ -421,7 +421,7 @@ Plan:
 
 bool objectFound(int value){
   //object detected less <= to 20 cm
-  if (value <= 20){
+  if (value <= 10){
     return true;
   }
   return false;
@@ -436,7 +436,7 @@ bool objectFound(int value){
 */ 
 
 void moveForward(int speed){
-  motor1.analogDriveMotor(speed*1.03);
+  motor1.analogDriveMotor(speed*1.00);
   motor2.analogDriveMotor(speed);
 }
 
@@ -522,37 +522,61 @@ void getClearOfObject(){
   int left = 0;
   int right = 0;
   // turnLeft();
-    while(distance1 <= 20){
+    while(distance1 <= 10){
       // turnLeft();
       // scanLeftandRight();
       
       turnRight();
-      if (distance1 <=20) left = 1;
-      reverseFromRight();
-      if (distance1 <=20) left = 1;
-      
-      turnLeft();
-      if(distance1 <= 20) right = 1;
-      reverseFromLeft();
-      if(distance1 <= 20) right = 1;
-
-      if(left == 1 && right == 1){
-        moveReverse();
-        
-      } else if(left == 0 && right ==1){
-        //go left, its clear
-        turnLeft();
-        delay(100);
-        moveForward(-100);
-      } else if(left == 1 && right == 0){
-        turnRight();
-        delay(100);
-
-        moveForward(-100);
-      }
       distance1 = sensorValueToDistance(analogRead(DIST1));
-      left = 0;
-      right = 0;
+      if (distance1 <=10) right = 1;
+      
+      // if (distance1 <=20) right = 1;
+      if (right == 0) 
+      {
+        Serial.print("this is right boolean: ");
+        Serial.println()
+        turnRight();
+        break;
+      }
+
+      reverseFromRight();
+
+      turnLeft();
+      distance1 = sensorValueToDistance(analogRead(DIST1));
+      if(distance1 <= 10) left = 1;
+      
+      // if(distance1 <= 20) left = 1;
+      if (left == 0) 
+      {
+        turnLeft();
+        break;
+      }
+
+      reverseFromLeft();
+
+      // if(left == 1 && right == 1){
+      //   moveReverse();
+      //   break;
+      // } 
+      
+      if(left == 0 && right == 0){
+        moveForward(-100);
+        break;
+      }
+      // else if(left == 0 && right ==1){
+      //   //go left, its clear
+      //   turnLeft();
+      //   delay(100);
+      //   moveForward(-100);
+      // } else if(left == 1 && right == 0){
+      //   turnRight();
+      //   delay(100);
+
+      //   moveForward(-100);
+      // }
+      distance1 = sensorValueToDistance(analogRead(DIST1));
+      // left = 0;
+      // right = 0;
     }
       
   // }
@@ -577,6 +601,7 @@ void seedRound(){
     moveForward(-150);
     delay(250);
     turnLeft();
+    delay(250);
     Serial.println("Start moving forward...");
 
 
@@ -588,7 +613,7 @@ void seedRound(){
     while(true){
       // while(true){
       Serial.println(sensorValueToDistance(analogRead(DIST1)));
-      moveForward(-150);
+      moveForward(-155);
       if(objectFound(sensorValueToDistance(analogRead(DIST1)))){
         Serial.println("found object dist1");
         getClearOfObject();
@@ -600,12 +625,12 @@ void seedRound(){
         //reverse from buttton
         objectsDetected++;
         Serial.print("objectDetect:");
-        Serial.println(objectsDetected);
+        // Serial.println(objectsDetected);
       } 
       //hopefully dont detect more than 4 objects on the way to first button.
-      if(objectsDetected == 20){
-        break;
-      }
+      // if(objectsDetected == 20){
+      //   break;
+      // }
     }
 
     Serial.println("found object dist1!!!!");
