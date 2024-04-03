@@ -113,8 +113,8 @@ void Robot::seedRound() {
   Serial.println("Start moving forward...");
   int objectsDetected = 0;
   while (true) {
-    Serial.println(dist1.getDistance());
-    moveForward(-155);
+    Serial.println(dist1.getDistance());// Check distance...
+    moveForward(-155); //Move forward no matter what? SHouldn't this only happen if object not found?
     if (dist1.objectFound()) {
       Serial.println("found object dist1");
       getClearOfObject();
