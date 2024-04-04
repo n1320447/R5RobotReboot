@@ -3,7 +3,8 @@
 #include "BluetoothSerial.h"
 #include "MotorExtended.h"
 #include "DistanceSensor.h"
-#include "Robot.h" // Include the Robot class header file
+#include "Robot.h"
+#include "OccupancyGrid.h" // Include the Robot class header file
 
 //I2C pins
 #define SCL1 22
@@ -62,7 +63,14 @@ void setup() {
   SerialBT.begin("ESP32test"); // Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
   bluetoothConnection();
-  myRobot.seedRound(); // Call the seedRound function using the myRobot object
+  // myRobot.seedRound(); // Call the seedRound function using the myRobot object CAUTION this i s 
+  OccupancyGrid* myGrid = new OccupancyGrid();
+
+  myGrid->printGrid();  
+  // Use the grid...
+  delete myGrid; // When done, to prevent memory leaks
+
+
 }
 
 void loop() {

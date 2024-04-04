@@ -32,6 +32,7 @@ public:
     void updateOccupancyGrid();   // Updates the occupancy grid based on sensor readings
     void replanPath();            // Replans the path if obstacles are encountered or if the grid is updated
 
+
     MotorExtended motor1;
     MotorExtended motor2;
     DistanceSensor dist1;

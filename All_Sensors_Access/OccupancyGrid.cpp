@@ -1,10 +1,15 @@
 #include "OccupancyGrid.h"
 
 OccupancyGrid::OccupancyGrid() {
+    grid = new CellState*[height];
+    for(int i = 0; i < height; ++i) {
+        grid[i] = new CellState[width];
+    }
     initializeGrid();
 }
 
 void OccupancyGrid::initializeGrid() {
+    Serial.println("entered init grid");
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
             grid[i][j] = UNKNOWN;
@@ -32,4 +37,38 @@ void OccupancyGrid::markAreaAs(int centerX, int centerY, CellState state) {
             markCell(centerX + j, centerY + i, state);
         }
     }
+}
+
+void OccupancyGrid::printGrid(){
+        for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            switch (grid[i][j]) {
+                case UNKNOWN:
+                    Serial.print("?"); // Represent UNKNOWN with ?
+                    break;
+                case CLEAR:
+                    Serial.print("."); // Represent CLEAR with .
+                    break;
+                case OCCUPIED:
+                    Serial.print("#"); // Represent OCCUPIED with #
+                    break;
+            }
+        }
+        Serial.println(); // Move to the next line after printing each row
+    }
+}
+
+// OccupancyGrid::OccupancyGrid() {
+//     grid = new CellState*[height];
+//     for(int i = 0; i < height; ++i) {
+//         grid[i] = new CellState[width];
+//     }
+//     initializeGrid();
+// }
+
+OccupancyGrid::~OccupancyGrid() {
+    for(int i = 0; i < height; ++i) {
+        delete[] grid[i]; // Free each sub-array
+    }
+    delete[] grid; // Free the array of pointers
 }

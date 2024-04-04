@@ -5,7 +5,9 @@ Robot::Robot(int ain1, int ain2, int pwma, int stby, int bin1, int bin2, int pwm
   : motor1(ain1, ain2, pwma, stby, 1, 1),
     motor2(bin1, bin2, pwmb, stby, 2, i2c, 1),
     dist1(dist_pin),
-    i2c(i2c) {}
+    i2c(i2c),
+    occupancyGrid(),
+    pathPlanner(occupancyGrid){}
 
 void Robot::updateAll() {
   Serial.println("Trying to update sensors");
