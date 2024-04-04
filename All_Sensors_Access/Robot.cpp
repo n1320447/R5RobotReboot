@@ -2,15 +2,44 @@
 #include <Arduino.h>
 
 Robot::Robot(int ain1, int ain2, int pwma, int stby, int bin1, int bin2, int pwmb, int dist_pin, TwoWire& i2c)
-  : motor1(ain1, ain2, pwma, stby, 1, 1),
-    motor2(bin1, bin2, pwmb, stby, 2, i2c, 1),
-    dist1(dist_pin),
-    i2c(i2c) {}
+: motor1(ain1, ain2, pwma, stby, 1, i2c, 1),
+  motor2(bin1, bin2, pwmb, stby, 2, i2c, 1),
+  dist1(dist_pin),
+  i2c(i2c) {}
 
 void Robot::updateAll() {
-  Serial.println("Trying to update sensors");
+  Serial.println("Updating Motor1...");
   motor1.updateEncoderPos();
+  Serial.println("Updating Motor2...");
   motor2.updateEncoderPos();
+  if (isTraveling) {
+    long motor1Pos = motor1.cumulative_position;
+    long motor2Pos = motor2.cumulative_position;
+    long error = motor1Pos - motor2Pos;
+
+    // Correction is a simplified proportional control (adjust factor as needed)
+    int correction = error / 10; 
+
+    motor1.analogDriveMotor(int(100 - correction)); 
+    motor2.analogDriveMotor(int(100 + correction)); 
+
+    // If either motor reaches the target, stop both (could adjust for stricter conditions)
+    if (motor1Pos >= targetTicks || motor2Pos >= targetTicks) {
+      brakeMotors();
+      isTraveling = false;
+    }
+  }
+}
+
+void Robot::linearDrive(int ticks) {
+  motor1.connectEncoder(); // Assuming encoders need to be connected
+  motor2.connectEncoder();
+  motor1.updateEncoderPos(); // Get current position to set accurate target
+  motor2.updateEncoderPos();
+  targetTicks = motor1.cumulative_position + ticks; // Set target relative to current position
+  motor1.analogDriveMotor(100); // Start motors at initial speed
+  motor2.analogDriveMotor(100);
+  isTraveling = true;
 }
 
 void Robot::moveForward(int speed) {
@@ -73,6 +102,7 @@ void Robot::scanLeftandRight() {
 void Robot::brakeMotors() {
   motor1.brakeMotor(); // If there's a brake function
   motor2.brakeMotor(); // If there's a brake function
+  isTraveling = false; // Ensure we stop traveling when braking
 }
 
 void Robot::getClearOfObject() {
@@ -132,5 +162,22 @@ void Robot::seedRound() {
   moveForward(-150);
   delay(1000);
   Serial.println("break motors...");
+  brakeMotors();
+}
+
+void Robot::testRound(){
+  delay(10000);
+  motor1.encoderDrive(4096*5);
+  motor2.encoderDrive(4096*5);
+  Serial.println("Trying to encoder Drive...");
+
+  while(motor1.seeking_target || motor2.seeking_target){
+    Serial.println("Still seeking...");
+    updateAll(); 
+  }
+  motor1.analogDriveMotor(255);
+  motor2.analogDriveMotor(-255);
+  delay(1000);
+  Serial.println("We ran!");
   brakeMotors();
 }

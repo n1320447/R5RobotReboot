@@ -62,7 +62,8 @@ void setup() {
   SerialBT.begin("ESP32test"); // Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
   bluetoothConnection();
-  myRobot.seedRound(); // Call the seedRound function using the myRobot object
+  // myRobot.seedRound(); // Call the seedRound function using the myRobot object
+  myRobot.testRound();
 }
 
 void loop() {

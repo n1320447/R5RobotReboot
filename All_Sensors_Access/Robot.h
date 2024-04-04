@@ -5,7 +5,7 @@
 #include "DistanceSensor.h"
 
 class Robot {
-  public:
+public:
     Robot(int ain1, int ain2, int pwma, int stby, int bin1, int bin2, int pwmb, int dist_pin, TwoWire& i2c);
 
     void updateAll();
@@ -19,14 +19,18 @@ class Robot {
     void brakeMotors();
     void getClearOfObject();
     void seedRound();
-
+    void linearDrive(int ticks);
+    void testRound();
+    
     MotorExtended motor1;
     MotorExtended motor2;
-    DistanceSensor dist1;   
+    DistanceSensor dist1;
 
-  private:
+private:
     int distPin;
     TwoWire& i2c;
+    int targetTicks = 0; // Default initialization
+    bool isTraveling = false; // Default initialization
 };
 
 #endif

@@ -11,27 +11,27 @@ public:
     MotorExtended(int IN1, int IN2, int PWM, int STBY_PIN, int CHANNEL, TwoWire& wire, int DIRECTION = 1);
     MotorExtended(int IN1, int IN2, int PWM, int STBY_PIN, int CHANNEL, int DIRECTION = 1);
 
-    // Other member function declarations...
     void connectEncoder();
     void updateEncoderPos();
     void analogDriveMotor(int analogSpeed);
     void brakeMotor();
-    
+    void encoderDrive(long delta); // Drive the motor based on delta encoder counts
+
+    long cumulative_position = 0;
+    long previous_cumulative_position = 0;
+    long offset_cumulative_position = 0;
+    bool seeking_target = false; // Whether the motor is currently seeking a target position
+    int prev_error;
+
 private:
-    // Member variables...
-    long cumulative_position;
-    long previous_cumulative_position;
-    float angular_velocity;
-    float previous_angular_velocity;
-    int analog_velocity;
-    int prev_analog_velocity;
-    long offset_cumulative_position;
-    float radians_per_tick;
-    long prev_read_time;
-    float linear_velocity;
-    // const float diameter;
     Motor motor;
     AS5600 encoder;
+    long target_position = 0; // Target encoder position to reach
+    float kP = 0.1; // Proportional gain for encoderDrive
+    int analog_velocity = 0;
+    long prev_read_time = 0;
+
+    void proportionalControl(); // Adjusts motor speed based on the proportional control logic
 };
 
 #endif
