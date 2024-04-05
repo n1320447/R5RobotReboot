@@ -62,6 +62,13 @@ void setup() {
   bluetoothConnection();
   // myRobot.seedRound(); // Call the seedRound function using the myRobot object
   myRobot.driveInSquare();
+
+  Serial.println("first print");
+  myRobot.occupancyGrid.printGrid();
+  Serial.println("mark grid");
+  myRobot.occupancyGrid.markCell(10,10, OCCUPIED);
+  Serial.println(" print again");
+  myRobot.occupancyGrid.printGrid();
 }
 
 void loop() {

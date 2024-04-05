@@ -3,6 +3,8 @@
 
 #include "MotorExtended.h"
 #include "DistanceSensor.h"
+#include "OccupancyGrid.h"  // Include the OccupancyGrid class header
+#include "PathPlanner.h"  
 
 class Robot {
 public:
@@ -27,11 +29,13 @@ public:
     void rightOneSquare();
     void testRound();
     void driveInSquare();
+    void scanFront();
 
 
     MotorExtended motor1;
     MotorExtended motor2;
     DistanceSensor dist1;
+    OccupancyGrid occupancyGrid;
 
 private:
     int distPin;
@@ -47,7 +51,9 @@ private:
     float straight_ranges[3] = {6.0, 10.0, 14.0};
     float diagonal_ranges[3] = {8.485, 14.14, 19.80};
 
+    PathPlanner pathPlanner;  
     long distToEncoderTicks(float distance);
+
 };
 
 #endif

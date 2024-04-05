@@ -5,7 +5,9 @@ Robot::Robot(int ain1, int ain2, int pwma, int stby, int bin1, int bin2, int pwm
 : motor1(ain1, ain2, pwma, stby, 1, i2c, 1),
   motor2(bin1, bin2, pwmb, stby, 2, i2c, 1),
   dist1(dist_pin),
-  i2c(i2c) {}
+  i2c(i2c),
+  occupancyGrid(),
+  pathPlanner(occupancyGrid){}
 
 void Robot::updateAll() {
   Serial.println("Updating Motor1...");
@@ -216,6 +218,7 @@ void Robot::forwardOneSquare(){
   delay(500);
 }
 
+
 void Robot::leftOneSquare(){
 
   //Turn right
@@ -319,3 +322,12 @@ void Robot::driveInSquare(){
   brakeMotors();
   Serial.println("Done with square");
 }
+
+void Robot::scanFront(){
+  float distance1 = dist1.getDistance();
+  if(distance1 < safeDistance){
+    Serial.println("inside scanFront safeDistance if");
+  }
+}
+
+
