@@ -39,12 +39,10 @@ void bluetoothConnection(){
   delay(20);       
 }
 
-
 TwoWire I2Ctwo = TwoWire(1);
 
 // Create a Robot object with motor and distance sensor configurations
 Robot myRobot(AIN1, AIN2, PWMA, STBY, BIN1, BIN2, PWMB, DIST1, I2Ctwo);
-
 
 void setup() {
   Serial.begin(115200);
@@ -63,7 +61,7 @@ void setup() {
   Serial.println("The device started, now you can pair it with bluetooth!");
   bluetoothConnection();
   // myRobot.seedRound(); // Call the seedRound function using the myRobot object
-  myRobot.testRound();
+  myRobot.driveInSquare();
 }
 
 void loop() {

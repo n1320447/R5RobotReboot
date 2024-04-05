@@ -20,8 +20,14 @@ public:
     void getClearOfObject();
     void seedRound();
     void linearDrive(int ticks);
+    void turn90Degrees(int direction);
+    void forwardOneSquare();
+    void leftOneSquare();
+    void rightOneSquare();
     void testRound();
-    
+    void driveInSquare();
+
+
     MotorExtended motor1;
     MotorExtended motor2;
     DistanceSensor dist1;
@@ -31,6 +37,9 @@ private:
     TwoWire& i2c;
     int targetTicks = 0; // Default initialization
     bool isTraveling = false; // Default initialization
+    float square_len = 4.; //Each square in occupancy grid is 4x4 inches
+
+    long distToEncoderTicks(float distance);
 };
 
 #endif
