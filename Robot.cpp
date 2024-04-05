@@ -139,7 +139,13 @@ long Robot::distToEncoderTicks(float distance){
   float wheel_circ = 3.14159 * wheel_diam;
   float dist_per_step = wheel_circ/4096;
 
-  int encoder_steps = int(distance / dist_per_step);
+  long encoder_steps = long(distance / dist_per_step);
+
+  Serial.print("For distance: ");
+  Serial.println(distance);
+  Serial.print("Yields this many encoder steps: ");
+  Serial.println(encoder_steps);
+
   return encoder_steps;
 }
 
@@ -147,13 +153,25 @@ void Robot::turn90Degrees(int direction){
   //+1 for right turn, -1 for left turn
   //Drives each wheel a quarter of a circumfrence of the whole bot
 
-  long quarter_turn_ticks = distToEncoderTicks(4.66921508); //mystery number is (pi*bot_diam)/4 = bot_circum/4
+  long quarter_turn_ticks = distToEncoderTicks(3.93); //mystery number is (pi*bot_diam)/4 = bot_circum/4
 
   long left_dist = quarter_turn_ticks  * direction;
   long right_dist = quarter_turn_ticks * -1 * direction;
 
+  Serial.print("left_dist is: ");
+  Serial.println(left_dist);
+  Serial.print("right_dist is: ");
+  Serial.println(right_dist);
+
   motor1.encoderDrive(left_dist);
   motor2.encoderDrive(right_dist);
+
+  while(motor1.seeking_target || motor2.seeking_target){
+    Serial.println("Still moving...");
+    updateAll();
+  }
+  Serial.println("Done!");
+
 }
 
 void Robot::forwardOneSquare(){
@@ -178,10 +196,10 @@ void Robot::leftOneSquare(){
   //Turn right
   Serial.println("Performing turn left...");
   turn90Degrees(-1);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
+  // while(motor1.seeking_target || motor2.seeking_target){
+  //   Serial.println("Still moving...");
+  //   updateAll();
+  // }
   Serial.println("Finished First turn");
   delay(500);
 
@@ -190,8 +208,8 @@ void Robot::leftOneSquare(){
 
 void Robot::rightOneSquare(){
   //Turn right
-  Serial.println("Performing turn left...");
-  turn90Degrees(-1);
+  Serial.println("Performing turn right...");
+  turn90Degrees(1);
   while(motor1.seeking_target || motor2.seeking_target){
     Serial.println("Still moving...");
     updateAll();
@@ -200,7 +218,6 @@ void Robot::rightOneSquare(){
   delay(500);
 
   forwardOneSquare();
-}
 }
 
 void Robot::seedRound() {
@@ -272,94 +289,15 @@ void Robot::testRound(){
   brakeMotors();
 }
 
-void Robot::driveInSquare(float side_length){
+void Robot::driveInSquare(){
   delay(10000);
-  Serial.println("Trying to drive in square");
-
-  long encoder_ticks_distance = distToEncoderTicks(12);
-
-  //First leg
-  Serial.println("Performing first leg of travel...");
-  motor1.encoderDrive(encoder_ticks_distance);
-  motor2.encoderDrive(encoder_ticks_distance);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First Leg");
+  rightOneSquare();
   delay(500);
-
-  //Turn right
-  Serial.println("Performing turn right...");
-  turn90Degrees(1);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First turn");
+  rightOneSquare();
   delay(500);
-
-  //Second leg
-  Serial.println("Performing first leg of travel...");
-  motor1.encoderDrive(encoder_ticks_distance);
-  motor2.encoderDrive(encoder_ticks_distance);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First Leg");
+  rightOneSquare();
   delay(500);
-
-  //Turn right
-  Serial.println("Performing turn right...");
-  turn90Degrees(1);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First turn");
+  rightOneSquare();
   delay(500);
-
-  //Third Leg
-  Serial.println("Performing first leg of travel...");
-  motor1.encoderDrive(encoder_ticks_distance);
-  motor2.encoderDrive(encoder_ticks_distance);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First Leg");
-  delay(500);
-
-  //Turn right
-  Serial.println("Performing turn right...");
-  turn90Degrees(1);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First turn");
-  delay(500);
-
-  //4th leg
-  Serial.println("Performing first leg of travel...");
-  motor1.encoderDrive(encoder_ticks_distance);
-  motor2.encoderDrive(encoder_ticks_distance);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First Leg");
-  delay(500);
-
-  //Reorient to first pose
-  Serial.println("Performing turn right...");
-  turn90Degrees(1);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
-  Serial.println("Finished First turn");
-  delay(500);
-
+  brakeMotors();
 }

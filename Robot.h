@@ -25,7 +25,7 @@ public:
     void leftOneSquare();
     void rightOneSquare();
     void testRound();
-    void driveInSquare(float distance);
+    void driveInSquare();
 
 
     MotorExtended motor1;
@@ -37,7 +37,7 @@ private:
     TwoWire& i2c;
     int targetTicks = 0; // Default initialization
     bool isTraveling = false; // Default initialization
-    int square_len = 4; //Each square in occupancy grid is 4x4 inches
+    float square_len = 4.; //Each square in occupancy grid is 4x4 inches
 
     long distToEncoderTicks(float distance);
 };
