@@ -106,6 +106,20 @@ void Robot::getClearOfObject() {
   }
 }
 
+
+// void Robot::turnInCircle() {
+//   // Assuming motor1 is on the left and motor2 is on the right for this example
+//   // Adjust motor power and duration based on your specific robot's design and desired circle size
+//   motor1.analogDriveMotor(100); // Drive left motor forward
+//   motor2.analogDriveMotor(-100); // Drive right motor in reverse
+//   delay(1000); // Duration of turn, adjust this to complete a circle
+
+//   // Optionally, stop the motors after completing the turn
+//   brakeMotors();
+// }
+
+
+
 void Robot::seedRound() {
   turnRight();
   moveForward(-150);

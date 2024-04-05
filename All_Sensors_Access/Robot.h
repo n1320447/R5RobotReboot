@@ -31,16 +31,17 @@ public:
     void navigateToGoal();        // Navigates the robot along the planned path to the goal
     void updateOccupancyGrid();   // Updates the occupancy grid based on sensor readings
     void replanPath();            // Replans the path if obstacles are encountered or if the grid is updated
+    void turnInCircle();
 
 
     MotorExtended motor1;
     MotorExtended motor2;
     DistanceSensor dist1;
+    OccupancyGrid occupancyGrid;  // Occupancy grid instance
 
 private:
     int distPin;
     TwoWire& i2c;
-    OccupancyGrid occupancyGrid;  // Occupancy grid instance
     PathPlanner pathPlanner;      // Path planner instance
 };
 

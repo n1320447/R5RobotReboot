@@ -64,11 +64,24 @@ void setup() {
   Serial.println("The device started, now you can pair it with bluetooth!");
   bluetoothConnection();
   // myRobot.seedRound(); // Call the seedRound function using the myRobot object CAUTION this i s 
-  OccupancyGrid* myGrid = new OccupancyGrid();
+  // OccupancyGrid* myGrid = new OccupancyGrid();
 
-  myGrid->printGrid();  
+  Serial.println(" Before marking cell ");
+  // myGrid->printGrid();
+  // myGrid->markCell(10, 10, OCCUPIED);
+  Serial.println(" After marking ");
+
+  
+  // myGrid->printGrid();
+  Serial.println("first print");
+  myRobot.occupancyGrid.printGrid();
+  Serial.println("mark grid");
+  myRobot.occupancyGrid.markCell(10,10, OCCUPIED);
+  Serial.println(" print again");
+  myRobot.occupancyGrid.printGrid();
+
   // Use the grid...
-  delete myGrid; // When done, to prevent memory leaks
+  // delete myGrid; // When done, to prevent memory leaks
 
 
 }
