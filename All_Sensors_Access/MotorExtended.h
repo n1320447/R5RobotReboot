@@ -17,9 +17,13 @@ public:
     void brakeMotor();
     void encoderDrive(long delta); // Drive the motor based on delta encoder counts
 
+private:
+    Motor motor;
+    AS5600 encoder;
     long cumulative_position = 0;
     long previous_cumulative_position = 0;
     long offset_cumulative_position = 0;
+    long target_position = 0; // Target encoder position to reach
     bool seeking_target = false; // Whether the motor is currently seeking a target position
     int prev_error;
 

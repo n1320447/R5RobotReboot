@@ -2,10 +2,12 @@
 #include <Arduino.h>
 
 Robot::Robot(int ain1, int ain2, int pwma, int stby, int bin1, int bin2, int pwmb, int dist_pin, TwoWire& i2c)
-: motor1(ain1, ain2, pwma, stby, 1, i2c, 1),
-  motor2(bin1, bin2, pwmb, stby, 2, i2c, 1),
-  dist1(dist_pin),
-  i2c(i2c) {}
+  : motor1(ain1, ain2, pwma, stby, 1, 1),
+    motor2(bin1, bin2, pwmb, stby, 2, i2c, 1),
+    dist1(dist_pin),
+    i2c(i2c),
+    occupancyGrid(),
+    pathPlanner(occupancyGrid){}
 
 void Robot::updateAll() {
   Serial.println("Updating Motor1...");
@@ -134,6 +136,20 @@ void Robot::getClearOfObject() {
   }
 }
 
+
+// void Robot::turnInCircle() {
+//   // Assuming motor1 is on the left and motor2 is on the right for this example
+//   // Adjust motor power and duration based on your specific robot's design and desired circle size
+//   motor1.analogDriveMotor(100); // Drive left motor forward
+//   motor2.analogDriveMotor(-100); // Drive right motor in reverse
+//   delay(1000); // Duration of turn, adjust this to complete a circle
+
+//   // Optionally, stop the motors after completing the turn
+//   brakeMotors();
+// }
+
+
+
 void Robot::seedRound() {
   turnRight();
   moveForward(-150);
@@ -143,8 +159,8 @@ void Robot::seedRound() {
   Serial.println("Start moving forward...");
   int objectsDetected = 0;
   while (true) {
-    Serial.println(dist1.getDistance());
-    moveForward(-155);
+    Serial.println(dist1.getDistance());// Check distance...
+    moveForward(-155); //Move forward no matter what? SHouldn't this only happen if object not found?
     if (dist1.objectFound()) {
       Serial.println("found object dist1");
       getClearOfObject();
