@@ -38,11 +38,19 @@ public:
     MotorExtended motor2;
     DistanceSensor dist1;
     OccupancyGrid occupancyGrid;  // Occupancy grid instance
+    void linearDrive(int ticks);
+    void testRound();
+    
+    MotorExtended motor1;
+    MotorExtended motor2;
+    DistanceSensor dist1;
 
 private:
     int distPin;
     TwoWire& i2c;
     PathPlanner pathPlanner;      // Path planner instance
+    int targetTicks = 0; // Default initialization
+    bool isTraveling = false; // Default initialization
 };
 
 #endif
