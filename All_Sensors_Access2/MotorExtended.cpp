@@ -59,7 +59,11 @@ void MotorExtended::proportionalControl() {
     Serial.print("Prev Error is: ");
     Serial.println(prev_error);
 
-    bool getting_better = (error - prev_error) < 0; // If your previous error is greater than your current error, then you are on a good track
+    bool getting_better = (error - prev_error) <= 0; // If your previous error is greater than your current error, then you are on a good track
+
+    Serial.print("difference in error: ");
+    Serial.println((error - prev_error));
+
     if(getting_better){
       Serial.println("Getting better");
     }

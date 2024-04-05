@@ -174,6 +174,31 @@ void Robot::turn90Degrees(int direction){
 
 }
 
+void Robot::turn45Degrees(int direction){
+  //+1 for right turn, -1 for left turn
+  //Drives each wheel a quarter of a circumfrence of the whole bot
+
+  long quarter_turn_ticks = distToEncoderTicks(3.93/2); //mystery number is (pi*bot_diam)/4 = bot_circum/4
+
+  long left_dist = quarter_turn_ticks  * direction;
+  long right_dist = quarter_turn_ticks * -1 * direction;
+
+  Serial.print("left_dist is: ");
+  Serial.println(left_dist);
+  Serial.print("right_dist is: ");
+  Serial.println(right_dist);
+
+  motor1.encoderDrive(left_dist);
+  motor2.encoderDrive(right_dist);
+
+  while(motor1.seeking_target || motor2.seeking_target){
+    Serial.println("Still moving...");
+    updateAll();
+  }
+  Serial.println("Done!");
+
+}
+
 void Robot::forwardOneSquare(){
   //Attemptign forward Travel of square distance
 
@@ -210,10 +235,6 @@ void Robot::rightOneSquare(){
   //Turn right
   Serial.println("Performing turn right...");
   turn90Degrees(1);
-  while(motor1.seeking_target || motor2.seeking_target){
-    Serial.println("Still moving...");
-    updateAll();
-  }
   Serial.println("Finished First turn");
   delay(500);
 
@@ -300,4 +321,5 @@ void Robot::driveInSquare(){
   rightOneSquare();
   delay(500);
   brakeMotors();
+  Serial.println("Done with square");
 }

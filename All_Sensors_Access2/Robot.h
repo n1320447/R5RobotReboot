@@ -21,6 +21,7 @@ public:
     void seedRound();
     void linearDrive(int ticks);
     void turn90Degrees(int direction);
+    void turn45Degrees(int direction);
     void forwardOneSquare();
     void leftOneSquare();
     void rightOneSquare();
@@ -38,6 +39,11 @@ private:
     int targetTicks = 0; // Default initialization
     bool isTraveling = false; // Default initialization
     float square_len = 4.; //Each square in occupancy grid is 4x4 inches
+
+    const float max_distance = 24; //inches
+
+    float straight_ranges[3] = {6.0, 10.0, 14.0};
+    float diagonal_ranges[3] = {8.485, 14.14, 19.80};
 
     long distToEncoderTicks(float distance);
 };
