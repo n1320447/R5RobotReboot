@@ -325,7 +325,7 @@ void Robot::driveInSquare(){
 
 void Robot::scanFront(){
   float distance1 = dist1.getDistance();
-  if(distance1 < safeDistance){
+  if(distance1 < max_distance){
     Serial.println("inside scanFront safeDistance if");
   }
 }

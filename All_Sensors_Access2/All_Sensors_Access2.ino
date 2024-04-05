@@ -66,7 +66,7 @@ void setup() {
   Serial.println("first print");
   myRobot.occupancyGrid.printGrid();
   Serial.println("mark grid");
-  myRobot.occupancyGrid.markCell(10,10, OCCUPIED);
+  myRobot.occupancyGrid.markCell(7, 7, OCCUPIED); // marks robot starting position square is 4"x4"
   Serial.println(" print again");
   myRobot.occupancyGrid.printGrid();
 }
