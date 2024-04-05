@@ -221,10 +221,6 @@ void Robot::leftOneSquare(){
   //Turn right
   Serial.println("Performing turn left...");
   turn90Degrees(-1);
-  // while(motor1.seeking_target || motor2.seeking_target){
-  //   Serial.println("Still moving...");
-  //   updateAll();
-  // }
   Serial.println("Finished First turn");
   delay(500);
 

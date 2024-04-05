@@ -41,6 +41,8 @@ private:
     float square_len = 4.; //Each square in occupancy grid is 4x4 inches
 
     const float max_distance = 24; //inches
+    const float bot_offset = 4; //Distance between center of bot and the distance sensor
+
 
     float straight_ranges[3] = {6.0, 10.0, 14.0};
     float diagonal_ranges[3] = {8.485, 14.14, 19.80};
