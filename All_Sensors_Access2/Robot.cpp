@@ -326,6 +326,7 @@ void Robot::driveInSquare(){
 bool Robot::scanFront(){
   Serial.println("inside scanFront method");
   float distance1 = (dist1.getDistance()); /// this would have to be sensor distance1 = (dist1.getDistance() * 2.54) / 4 since distance
+  // float distance1 = 12;
   //sensor reading is in cm and each 'square' is 4 inches x 4 inches.
   //check if something is less than or equal to max_distance
   Serial.println(distance1);

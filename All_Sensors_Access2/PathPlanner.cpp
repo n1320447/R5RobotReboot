@@ -73,7 +73,7 @@ void PathPlanner::planPath(Robot& myRobot, int startX, int startY, int goalX, in
          myRobot.forwardOneSquare();
          myRobot.updateRobotXCoord(myRobot.RobotCurrentPositionX);
     }
-    if(myRobot.scanFront() == true) { //there is an object detected within our safe distance
+    else if(myRobot.scanFront() == true) { //there is an object detected within our safe distance
         //maybe need a check to make sure the detected object is not too close.
         int RobotXCoordinate = myRobot.RobotCurrentPositionX;
         if(myRobot.occupancyGrid.getCellState(RobotXCoordinate--,myRobot.RobotCurrentPositionY) == CLEAR){
@@ -87,7 +87,7 @@ void PathPlanner::planPath(Robot& myRobot, int startX, int startY, int goalX, in
             //need to look for a diagonal route, front is occupied or for some reason unknown
             myRobot.scanDiagonals(); //this will mark the clear squares at the diagnols
             //find the farthest right clear square
-            Coordinates goalCoordinates = findFarthestRightClearSquare(myRobot); // these coords are farthest right that are clear
+            Coordinates topRightCoordinates = findFarthestRightClearSquare(myRobot); // these coords are farthest right that are clear
             //turnright in place
             myRobot.turn90Degrees(1); //turn right
             myRobot.updateRobotDirection('E'); //update direction
@@ -131,6 +131,9 @@ void PathPlanner::planPath(Robot& myRobot, int startX, int startY, int goalX, in
         }
     }
 
+
+    //check if robot if near button 
+    checkIfNearGoal(myRobot, goalX, goalY);
     //********************************* //end of attempt#2 for algo // **************************
 
     
@@ -150,4 +153,24 @@ Coordinates PathPlanner::findFarthestRightClearSquare(Robot& myRobot) {
     }
 
     return farthestRightClear; // Returns {-1, -1} if no clear square is found
+}
+
+void PathPlanner::checkIfNearGoal(Robot& myRobot, int goalX, int goalY) {
+    // Assuming each square is defined as a 4x4 inch area and the robot's current position
+    // is accurately tracked and updated
+    const int closenessThreshold = 1; // Defines being in the adjacent square as "close"
+
+    int currentX = myRobot.RobotCurrentPositionX;
+    int currentY = myRobot.RobotCurrentPositionY;
+
+    // Check if the robot's current position is within one square of the goal position
+    if (abs(currentX - goalX) <= closenessThreshold && abs(currentY - goalY) <= closenessThreshold) {
+        // If within one square, consider it close to the goal
+        Serial.println("Robot is close to the goal!");
+        // Here you could trigger any specific behavior for being close to the goal,
+        // such as attempting to press the button or making a final adjustment to position
+    } else {
+        Serial.println("Robot is not close to the goal.");
+        // If not close, you might continue with path planning or other actions
+    }
 }
