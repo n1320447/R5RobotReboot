@@ -30,14 +30,20 @@ public:
     void testRound();
     void driveInSquare();
     bool scanFront();
+    bool scanDiagonals();
+    void turnSlightlyLeft(); // to be implemented if not already
+    void turnSlightlyRight(); // to be implemented if not already
+    void updateRobotXCoord(int x);
+    void updateRobotYCoord(int y);
 
 
     MotorExtended motor1;
     MotorExtended motor2;
     DistanceSensor dist1;
     OccupancyGrid occupancyGrid;
-    int RobotCurrentPositionX = 25; // since our graph is a 2d array we start a the bottom of the 2darray..
+    int RobotCurrentPositionX = 25; // since our graph is a 2d array we start at the bottom of the 2darray..
     int RobotCurrentPositionY = 2;
+    char RobotDirection = 'N'; //N = North, S = South, W = West, E = East
 
 private:
     int distPin;

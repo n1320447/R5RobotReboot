@@ -70,7 +70,7 @@ void setup() {
   Serial.println(" print again");
   myRobot.occupancyGrid.printGrid();
   myRobot.scanFront();
-  Serial.println("printing after scanfront");
+  Serial.println("printing after scanDiagonal");
   myRobot.occupancyGrid.printGrid();
 }
 
