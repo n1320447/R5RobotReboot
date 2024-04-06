@@ -19,6 +19,10 @@ void OccupancyGrid::initializeGrid() {
 
 void OccupancyGrid::markCell(int x, int y, CellState state) {
     Serial.println("outside marking cell:");
+    Serial.print("marking x, y: ");
+    Serial.print(x);
+    Serial.print( " ");
+    Serial.println(y);
     if (x >= 0 && x < width && y >= 0 && y < height) {
         Serial.println("inside marking cell:");
         grid[y][x] = state;
@@ -43,9 +47,9 @@ void OccupancyGrid::markAreaAs(int centerX, int centerY, CellState state) {
 
 void OccupancyGrid::printGrid(){
       Serial.println("inside print");
-        for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            switch (grid[i][j]) {
+        for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            switch (grid[j][i]) {
                 case UNKNOWN:
                     Serial.print("?"); // Represent UNKNOWN with ?
                     break;

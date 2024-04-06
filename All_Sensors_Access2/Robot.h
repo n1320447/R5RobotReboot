@@ -36,13 +36,15 @@ public:
     MotorExtended motor2;
     DistanceSensor dist1;
     OccupancyGrid occupancyGrid;
+    int RobotCurrentPositionX = 25; // since our graph is a 2d array we start a the bottom of the 2darray..
+    int RobotCurrentPositionY = 2;
 
 private:
     int distPin;
     TwoWire& i2c;
     int targetTicks = 0; // Default initialization
     bool isTraveling = false; // Default initialization
-    float square_len = 4.; //Each square in occupancy grid is 4x4 inches
+    int square_len = 4; //Each square in occupancy grid is 4x4 inches
 
     const float max_distance = 24; //inches
     const float bot_offset = 4; //Distance between center of bot and the distance sensor

@@ -324,9 +324,49 @@ void Robot::driveInSquare(){
 }
 
 void Robot::scanFront(){
-  float distance1 = dist1.getDistance();
-  if(distance1 < max_distance){
-    Serial.println("inside scanFront safeDistance if");
+  Serial.println("inside scanFront method");
+  float distance1 = 12.0; /// this would have to be sensor distance1 = (dist1.getDistance() * 2.54) / 4 since distance
+  //sensor reading is in cm and each 'square' is 4 inches.
+  //check if something is less than or equal to max_distance
+  if(distance1 <= max_distance){
+    // if(true){
+    Serial.print("RobotCurrentPositionX: ");
+    Serial.println(RobotCurrentPositionX);
+    Serial.print("RobotCurrentPositionY: ");
+    Serial.println(RobotCurrentPositionY);
+
+    // int targetY = (RobotCurrentPositionY + distance1 + bot_offset) / 4;
+    Serial.print("Calculated targetY before marking: ");
+    // Serial.println(targetY);
+    Serial.println("inside scanFront if");
+
+    //1)take the front array from robot object and start marking it if certain distances are clear
+    
+    if(distance1 <= 6){
+      //2.54 cm in 1 inch
+      int squares = distance1/4;
+      for(int i = 1; i <= squares; i++){
+        Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
+        occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
+      }
+      
+    }
+    else if(distance1 <= 10.0){
+      //found object at 10" or less
+      int squares = distance1/4;
+      for(int i = 1; i <= squares; i++){
+        Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
+        occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
+      }
+    } 
+    else if (distance1 <= 14.0){
+      //14
+      int squares = distance1/4;
+      for(int i = 1; i <= squares; i++){
+        Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
+        occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
+      }
+    }
   }
 }
 
