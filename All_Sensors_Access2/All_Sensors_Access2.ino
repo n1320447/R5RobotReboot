@@ -61,12 +61,12 @@ void setup() {
   Serial.println("The device started, now you can pair it with bluetooth!");
   bluetoothConnection(); // comment out to test on esp only
   // myRobot.seedRound(); // Call the seedRound function using the myRobot object
-  myRobot.driveInSquare(); // comment out to test on esp only
+  //myRobot.driveInSquare(); // comment out to test on esp only
 
   // Serial.println("first print");
   myRobot.occupancyGrid.printGrid();
   Serial.println("mark grid");
-  myRobot.occupancyGrid.markCell(myRobot.RobotCurrentPositionX, myRobot.RobotCurrentPositionY, OCCUPIED); // marks robot starting position square is 4"x4"
+  myRobot.occupancyGrid.markCell(myRobot.RobotCurrentPositionX, myRobot.RobotCurrentPositionY, CLEAR); // marks robot starting position square is 4"x4"
   Serial.println(" print again");
   myRobot.occupancyGrid.printGrid();
   myRobot.scanFront();

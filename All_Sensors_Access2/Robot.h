@@ -42,7 +42,7 @@ public:
     DistanceSensor dist1;
     OccupancyGrid occupancyGrid;
     int RobotCurrentPositionX = 25; // since our graph is a 2d array we start at the bottom of the 2darray..
-    int RobotCurrentPositionY = 2;
+    int RobotCurrentPositionY = 4;
     char RobotDirection = 'N'; //N = North, S = South, W = West, E = East
 
 private:
