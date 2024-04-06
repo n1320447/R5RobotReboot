@@ -46,22 +46,22 @@ Robot myRobot(AIN1, AIN2, PWMA, STBY, BIN1, BIN2, PWMB, DIST1, I2Ctwo);
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin(); // comment out to test on esp only
+  // Wire.begin(); // comment out to test on esp only
   delay(1000);
   Serial.println("Beginning connect process...");
-  I2Ctwo.begin(SDA2, SCL2, 100000); // comment out to test on esp only
+  // I2Ctwo.begin(SDA2, SCL2, 100000); // comment out to test on esp only
   delay(1000);
 
   Serial.println("For motor1...");
-  myRobot.motor1.connectEncoder(); // Access motor1 through myRobot object // comment out to test on esp only
+  // myRobot.motor1.connectEncoder(); // Access motor1 through myRobot object // comment out to test on esp only
   Serial.println("For motor2...");
-  myRobot.motor2.connectEncoder(); // Access motor2 through myRobot object // comment out to test on esp only
+  // myRobot.motor2.connectEncoder(); // Access motor2 through myRobot object // comment out to test on esp only
 
   SerialBT.begin("ESP32test"); // Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
-  bluetoothConnection(); // comment out to test on esp only
+  // bluetoothConnection(); // comment out to test on esp only
   // myRobot.seedRound(); // Call the seedRound function using the myRobot object
-  myRobot.driveInSquare(); // comment out to test on esp only
+  // myRobot.driveInSquare(); // comment out to test on esp only
 
   // Serial.println("first print");
   myRobot.occupancyGrid.printGrid();
@@ -70,7 +70,7 @@ void setup() {
   Serial.println(" print again");
   myRobot.occupancyGrid.printGrid();
   myRobot.scanFront();
-  Serial.println("printing after scanfront");
+  Serial.println("printing after scanDiagonal");
   myRobot.occupancyGrid.printGrid();
 }
 

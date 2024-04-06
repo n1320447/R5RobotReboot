@@ -325,22 +325,17 @@ void Robot::driveInSquare(){
 
 bool Robot::scanFront(){
   Serial.println("inside scanFront method");
-  float distance1 = 12.0; /// this would have to be sensor distance1 = (dist1.getDistance() * 2.54) / 4 since distance
-  //sensor reading is in cm and each 'square' is 4 inches.
+  float distance1 = 8.0; /// this would have to be sensor distance1 = (dist1.getDistance() * 2.54) / 4 since distance
+  //sensor reading is in cm and each 'square' is 4 inches x 4 inches.
   //check if something is less than or equal to max_distance
   if(distance1 <= max_distance){
-    // if(true){
     Serial.print("RobotCurrentPositionX: ");
     Serial.println(RobotCurrentPositionX);
     Serial.print("RobotCurrentPositionY: ");
     Serial.println(RobotCurrentPositionY);
 
-    // int targetY = (RobotCurrentPositionY + distance1 + bot_offset) / 4;
-    Serial.print("Calculated targetY before marking: ");
-    // Serial.println(targetY);
     Serial.println("inside scanFront if");
 
-    //1)take the front array from robot object and start marking it if certain distances are clear
     
     if(distance1 <= 6){
       //2.54 cm in 1 inch
@@ -349,6 +344,8 @@ bool Robot::scanFront(){
         Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
         occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
       }
+      occupancyGrid.markCell(RobotCurrentPositionX-squares-1,(RobotCurrentPositionY),OCCUPIED);
+
 
       return true;
       
@@ -360,6 +357,7 @@ bool Robot::scanFront(){
         Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
         occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
       }
+      occupancyGrid.markCell(RobotCurrentPositionX-squares-1,(RobotCurrentPositionY),OCCUPIED);
       return true;
     } 
     else if (distance1 <= 14.0){
@@ -369,12 +367,119 @@ bool Robot::scanFront(){
         Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
         occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
       }
+      occupancyGrid.markCell(RobotCurrentPositionX-squares-1,(RobotCurrentPositionY),OCCUPIED);
       return true;
     }
   }
 
   return false;
 
+}
+
+void Robot::turnSlightlyLeft() {
+    // This method turns the robot slightly to the left
+    motor1.analogDriveMotor(-50); // Negative speed for reverse
+    motor2.analogDriveMotor(50);  // Positive speed for forward
+    delay(100); // Adjust this delay to control the turn amount
+
+    brakeMotors(); // Stop the motors after the turn
+}
+
+void Robot::turnSlightlyRight() {
+    // This method turns the robot slightly to the right
+    motor1.analogDriveMotor(50);  // Positive speed for forward
+    motor2.analogDriveMotor(-50); // Negative speed for reverse
+    delay(100); // Adjust this delay to control the turn amount
+
+    brakeMotors(); // Stop the motors after the turn
+}
+
+bool Robot::scanDiagonals() {
+    Serial.println("Scanning diagonals");
+
+    // Turn slightly left to check the left diagonal
+    // turnSlightlyLeft();
+    // Assume getDistance reads the distance after the slight left turn
+    // float leftDiagonalDistance = dist1.getDistance(); 
+    float leftDiagonalDistance = 40;
+    // Process the left diagonal distance, e.g., marking cells based on the distance
+    if(leftDiagonalDistance <= max_distance){
+
+      if(leftDiagonalDistance <= 6){
+        int squares = leftDiagonalDistance/4;
+        for(int i = 1; i <= squares; i++){
+            occupancyGrid.markCell(RobotCurrentPositionX - i, RobotCurrentPositionY - i, CLEAR);
+        }
+        occupancyGrid.markCell(RobotCurrentPositionX - squares-1, RobotCurrentPositionY + squares-1, OCCUPIED);
+      }
+      else if (leftDiagonalDistance <= 10){
+        int squares = leftDiagonalDistance/4;
+        for(int i = 1; i <= squares; i++){
+            occupancyGrid.markCell(RobotCurrentPositionX - i, RobotCurrentPositionY - i, CLEAR);
+        }
+        occupancyGrid.markCell(RobotCurrentPositionX - squares-1, RobotCurrentPositionY + squares-1, OCCUPIED);
+      }
+      else if (leftDiagonalDistance <= 14){
+        int squares = leftDiagonalDistance/4;
+        for(int i = 1; i <= squares; i++){
+            occupancyGrid.markCell(RobotCurrentPositionX - i, RobotCurrentPositionY - i, CLEAR);
+        }
+        occupancyGrid.markCell(RobotCurrentPositionX - squares-1, RobotCurrentPositionY + squares-1, OCCUPIED);
+      }
+        return true;
+    }
+    // // Return to the original orientation
+    turnSlightlyRight();
+
+    // // Turn slightly right to check the right diagonal
+    turnSlightlyRight();
+    // // Assume getDistance reads the distance after the slight right turn
+    // float rightDiagonalDistance = dist1.getDistance();
+    float rightDiagonalDistance = 11;
+    // // Process the right diagonal distance
+
+    if(rightDiagonalDistance <= max_distance){
+
+      if(rightDiagonalDistance <= 6){
+        int squares = rightDiagonalDistance/4;
+        for(int i = 1; i <= squares; i++){
+            occupancyGrid.markCell(RobotCurrentPositionX - i, RobotCurrentPositionY + i, CLEAR);
+        }
+        occupancyGrid.markCell(RobotCurrentPositionX - squares-1, RobotCurrentPositionY + squares+1, OCCUPIED);
+      }
+      else if (rightDiagonalDistance <= 10){
+        int squares = rightDiagonalDistance/4;
+        for(int i = 1; i <= squares; i++){
+            occupancyGrid.markCell(RobotCurrentPositionX - i, RobotCurrentPositionY + i, CLEAR);
+        }
+        occupancyGrid.markCell(RobotCurrentPositionX - squares-1, RobotCurrentPositionY + squares+1, OCCUPIED);
+      }
+      else if (rightDiagonalDistance <= 14){
+        int squares = rightDiagonalDistance/4;
+        for(int i = 1; i <= squares; i++){
+            occupancyGrid.markCell(RobotCurrentPositionX - i, RobotCurrentPositionY + i, CLEAR);
+        }
+        occupancyGrid.markCell(RobotCurrentPositionX - squares-1, RobotCurrentPositionY + squares+1, OCCUPIED);
+
+      }
+        return true;
+    }
+
+    // // Return to the original orientation
+    turnSlightlyLeft();
+
+    // // Based on the distances, mark cells or decide the next action
+    // // This is where you'd implement logic similar to what was discussed before
+
+    return true; // Return true if clear path is found, false otherwise
+}
+
+void Robot::updateRobotXCoord(int x){
+  RobotCurrentPositionX = x;
+}
+
+void Robot::updateRobotYCoord(int y){
+  RobotCurrentPositionY = y;
 }
 
 
