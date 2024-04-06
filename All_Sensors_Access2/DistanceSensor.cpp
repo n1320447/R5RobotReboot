@@ -56,7 +56,8 @@ float DistanceSensor::mapDataToDist(int analog_value) {
 float DistanceSensor::getDistance() {
     // Updates, maps, then returns end distance from sensor
     readSensor();
-    return mapDataToDist(analog_distance);
+    float dist_cm = mapDataToDist(analog_distance);
+    float dist_in = dist_cm / 2.54;  
 }
 
 bool DistanceSensor::objectFound() {

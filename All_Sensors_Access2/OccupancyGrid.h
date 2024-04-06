@@ -16,8 +16,8 @@ public:
     void printGrid();
 
 private:
-    static const int width = 108; // 9 feet in inches 
-    static const int height = 36; // 3 feet in inches
+    static const int width = 108/4; // 9 feet in inches 
+    static const int height = 36/4; // 3 feet in inches
     static const int robotSize = 6; // Robot size (6"x6"), can be adjusted
     // CellState grid[height][width];
     CellState** grid;
