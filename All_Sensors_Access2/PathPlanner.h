@@ -5,10 +5,12 @@
 #include <Arduino.h>
 #include <vector>
 
+class Robot;
+
 class PathPlanner {
 public:
     PathPlanner(OccupancyGrid& grid);
-    void planPath(int startX, int startY, int goalX, int goalY);
+    void planPath(Robot& myRobot, int startX, int startY, int goalX, int goalY);
     // Add more methods as needed...
 private:
     OccupancyGrid& grid;

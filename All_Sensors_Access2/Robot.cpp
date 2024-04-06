@@ -323,7 +323,7 @@ void Robot::driveInSquare(){
   Serial.println("Done with square");
 }
 
-void Robot::scanFront(){
+bool Robot::scanFront(){
   Serial.println("inside scanFront method");
   float distance1 = 12.0; /// this would have to be sensor distance1 = (dist1.getDistance() * 2.54) / 4 since distance
   //sensor reading is in cm and each 'square' is 4 inches.
@@ -349,6 +349,8 @@ void Robot::scanFront(){
         Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
         occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
       }
+
+      return true;
       
     }
     else if(distance1 <= 10.0){
@@ -358,6 +360,7 @@ void Robot::scanFront(){
         Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
         occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
       }
+      return true;
     } 
     else if (distance1 <= 14.0){
       //14
@@ -366,8 +369,12 @@ void Robot::scanFront(){
         Serial.println("ycoordinate is: " + RobotCurrentPositionY-squares);
         occupancyGrid.markCell(RobotCurrentPositionX-i,(RobotCurrentPositionY),CLEAR);
       }
+      return true;
     }
   }
+
+  return false;
+
 }
 
 
