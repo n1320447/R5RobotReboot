@@ -29,7 +29,7 @@ public:
     void rightOneSquare();
     void testRound();
     void driveInSquare();
-    void scanFront();
+    bool scanFront();
 
 
     MotorExtended motor1;
