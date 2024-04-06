@@ -483,4 +483,8 @@ void Robot::updateRobotYCoord(int y){
   RobotCurrentPositionY = y;
 }
 
+void Robot::updateRobotDirection(char d){
+  RobotDirection = d;
+}
+
 

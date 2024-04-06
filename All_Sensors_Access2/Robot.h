@@ -35,6 +35,7 @@ public:
     void turnSlightlyRight(); // to be implemented if not already
     void updateRobotXCoord(int x);
     void updateRobotYCoord(int y);
+    void updateRobotDirection(char d);
 
 
     MotorExtended motor1;
