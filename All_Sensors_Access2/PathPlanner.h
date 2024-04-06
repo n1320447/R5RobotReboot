@@ -21,6 +21,7 @@ public:
     // Add more methods as needed...
 private:
     OccupancyGrid& grid;
+    void checkIfNearGoal(Robot& myRobot, int goalX, int goalY);
 };
 
 #endif

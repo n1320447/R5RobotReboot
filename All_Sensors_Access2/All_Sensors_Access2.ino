@@ -72,6 +72,11 @@ void setup() {
   myRobot.scanFront();
   Serial.println("printing after scanDiagonal");
   myRobot.occupancyGrid.printGrid();
+  PathPlanner seedRound(myRobot.occupancyGrid);
+  // seedRound.planPath(myRobot, myRobot.RobotCurrentPositionX, myRobot.RobotCurrentPositionY, 0, 4);
+  Serial.println("printing after planPath");
+  myRobot.occupancyGrid.printGrid();
+
 }
 
 void loop() {
