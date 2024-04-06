@@ -39,11 +39,39 @@ void PathPlanner::planPath(Robot& myRobot, int startX, int startY, int goalX, in
             //update current Robot Location on grid after each move
             myRobot.updateRobotXCoord(RobotXCoordinate); // should only need to update the X cartesian coordinate for front moving moves
         }
+    } else if(myRobot.scanFront() == false) {// there is not a object within the safeDistance aka the path is really clear
+        //move forward one square
+         myRobot.forwardOneSquare();
+         myRobot.updateRobotXCoord(myRobot.RobotCurrentPositionX);
     }
     //if front isnt clear, do a diagional check
     if(myRobot.scanDiagonals() == true){
         //there exists a diagonal path to take
         //try to take right path if possible
+        Coordinates goalCoordinates = findFarthestRightClearSquare(myRobot);
+
+    }
+
+    //***************
+    //***************
+    //attempt#2 for algo
+    //best case scenario - path forward is completely clear per our sensor reading.
+    if(myRobot.scanFront() == false) {// there is not a object within the safeDistance aka the path is really clear
+        //move forward one square
+         myRobot.forwardOneSquare();
+         myRobot.updateRobotXCoord(myRobot.RobotCurrentPositionX);
+    }
+    if(myRobot.scanFront() == true) { //there is an object detected within our safe distance
+        //maybe need a check to make sure the detected object is not too close.
+        if(myRobot.occupancyGrid.getCellState(RobotXCoordinate--,myRobot.RobotCurrentPositionY) == CLEAR){
+            //move one square
+        }else if (myRobot.occupancyGrid.getCellState(RobotXCoordinate--,myRobot.RobotCurrentPositionY) == OCCUPIED || myRobot.occupancyGrid.getCellState(RobotXCoordinate--,myRobot.RobotCurrentPositionY) == UNKNOWN){
+            //need to look for a diagonal route, front is occupied or for some reason unknown
+            myRobot.scanDiagonals(); //this will mark the clear squares at the diagnols
+            //find the farthest right clear square
+            Coordinates goalCoordinates = findFarthestRightClearSquare(myRobot); // these are farthest
+            
+        }
     }
 
 
